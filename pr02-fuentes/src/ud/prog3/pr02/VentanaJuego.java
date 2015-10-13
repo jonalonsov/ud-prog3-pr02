@@ -17,6 +17,7 @@ public class VentanaJuego extends JFrame {
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
+	boolean[] arrayBoolean;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -31,6 +32,9 @@ public class VentanaJuego extends JFrame {
 		JButton bFrenar = new JButton( "Frena" );
 		JButton bGiraIzq = new JButton( "Gira Izq." );
 		JButton bGiraDer = new JButton( "Gira Der." );
+		arrayBoolean = new boolean [4];
+		
+		
 		// Formato y layouts
 		pPrincipal.setLayout( null );
 		pPrincipal.setBackground( Color.white );
@@ -78,21 +82,60 @@ public class VentanaJuego extends JFrame {
 		pPrincipal.addKeyListener( new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_UP: {
-						miCoche.acelera( +5, 1 );
+						
+						arrayBoolean[0]=true;
+						
+						//miCoche.acelera( +5, 1 );
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
-						miCoche.acelera( -5, 1 );
+						
+						arrayBoolean[1]=true;
+						
+						//miCoche.acelera( -5, 1 );
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
-						miCoche.gira( +10 );
+						
+						arrayBoolean[2]=true;
+						
+						//miCoche.gira( +10 );
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
-						miCoche.gira( -10 );
+						
+						arrayBoolean[3]=true;
+						
+						//miCoche.gira( -10 );
+						break;
+					}
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				
+				switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP: {
+						
+						arrayBoolean[0]=false;
+						break;
+					}
+					case KeyEvent.VK_DOWN: {
+						
+						arrayBoolean[1]=false;
+						break;
+					}
+					case KeyEvent.VK_LEFT: {
+						
+						arrayBoolean[2]=false;
+						break;
+					}
+					case KeyEvent.VK_RIGHT: {
+						
+						arrayBoolean[3]=false;
 						break;
 					}
 				}
@@ -152,8 +195,27 @@ public class VentanaJuego extends JFrame {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				// Mover coche
+				
+				if (arrayBoolean[0]==true){
+					miCoche.acelera( +5, 1 );
+				}
+				if (arrayBoolean[1]==true){
+					miCoche.acelera( -5, 1 );
+				}
+				if (arrayBoolean[2]==true){
+					miCoche.gira( +10 );
+				}
+				if (arrayBoolean[3]==true){
+					miCoche.gira( -10 );
+				}
+
+				
+				
+				
+				
+				
 				miCoche.mueve( 0.040 );
-				// Chequear choques
+				// Chequear choques			
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
 				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
 					miMundo.rebotaHorizontal(miCoche);
