@@ -3,6 +3,7 @@ package ud.prog3.pr02;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -190,17 +191,63 @@ public class VentanaJuego extends JFrame {
 	 */
 	class MiRunnable implements Runnable {
 		boolean sigo = true;
+		double segundos;
 		@Override
 		public void run() {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				// Mover coche
 				
+				
+				miMundo.quitaYRotaEstrellas(6000);
+				
+				
+				if (segundos>=1.2){
+					Random r = new Random();
+					miMundo.creaEstrella(r.nextInt(1000), r.nextInt(750));
+					//miMundo.quitaYRotaEstrellas(6000);
+					segundos=0.0;
+				} else{
+					
+					segundos = segundos + 0.040;
+				}				
+				
+				double fuerzaRoz= miMundo.calcFuerzaRozamiento(miCoche.getMASA(), miCoche.getCOEF_RZTO_SUELO(), miCoche.getCOEF_RZTO_AIRE(), miCoche.getVelocidad());
+				
 				if (arrayBoolean[0]==true){
-					miCoche.acelera( +5, 1 );
+					
+					
+					miMundo.calcAceleracionConFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche.getMASA());
+					miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche);
+					
+					
+					
+					//miCoche.acelera( +5, 1 );
 				}
+				
+				if (arrayBoolean[0]==false){
+					
+					
+					//miMundo.calcAceleracionConFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche.getMASA());
+					miMundo.aplicarFuerza(fuerzaRoz, miCoche);
+					
+				}
+
+				
+				
 				if (arrayBoolean[1]==true){
-					miCoche.acelera( -5, 1 );
+					
+					miMundo.calcAceleracionConFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche.getMASA());
+					miMundo.aplicarFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche);
+					
+					//miCoche.acelera( -5, 1 );
+				}
+				
+				if (arrayBoolean[1]==false){
+					
+					//miMundo.calcAceleracionConFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche.getMASA());
+					miMundo.aplicarFuerza(fuerzaRoz, miCoche);
+					
 				}
 				if (arrayBoolean[2]==true){
 					miCoche.gira( +10 );

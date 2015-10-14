@@ -1,5 +1,8 @@
 package ud.prog3.pr02;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import javax.swing.JPanel;
 
 /** "Mundo" del juego del coche.
@@ -11,12 +14,62 @@ import javax.swing.JPanel;
 public class MundoJuego {
 	private JPanel panel;  // panel visual del juego
 	CocheJuego miCoche;    // Coche del juego
+	Estrella unaEstrella;
+	ArrayList<Estrella> ListaEstrellas = new ArrayList<Estrella>();
+	int numEstrellasQuitadas=0;
+	int numEstrellasComidas=0;
+	
+	
+	
 	
 	/** Construye un mundo de juego
 	 * @param panel	Panel visual del juego
 	 */
 	public MundoJuego( JPanel panel ) {
 		this.panel = panel;
+	}
+	
+	public static double calcFuerzaRozamiento( double masa, double coefRozSuelo, double coefRozAire, double vel ) {
+		
+			double fuerzaRozamientoAire = coefRozAire * (-vel); // En contra del movimiento
+			double fuerzaRozamientoSuelo = masa * coefRozSuelo * ((vel>0)?(-1):1); // Contra mvto
+			return fuerzaRozamientoAire + fuerzaRozamientoSuelo;
+	
+	}
+	
+	public static double calcAceleracionConFuerza( double fuerza, double masa ) {
+		
+		// 2ª ley de Newton: F = m*a ---> a = F/m
+		return fuerza/masa;
+	}
+	
+	
+	
+	
+//	Por último en esta clase MundoJuego, añade un método para poder aplicar la fuerza al coche. Observa cómo
+//	si no hay fuerza externa, la única fuerza que se aplica es la de rozamiento hasta que el coche se para:
+	
+	public static void aplicarFuerza( double fuerza, Coche coche ) {
+		
+	double fuerzaRozamiento = calcFuerzaRozamiento( Coche.MASA, Coche.COEF_RZTO_SUELO, Coche.COEF_RZTO_AIRE, coche.getVelocidad() );
+	double aceleracion = calcAceleracionConFuerza( fuerza+fuerzaRozamiento, Coche.MASA );
+		
+		if (fuerza==0) {
+			// No hay fuerza, solo se aplica el rozamiento
+			double velAntigua = coche.getVelocidad();
+			coche.acelera( aceleracion, 0.04 );
+			
+			if (velAntigua>=0 && coche.getVelocidad()<0	|| velAntigua<=0 && coche.getVelocidad()>0) {
+				
+			
+				coche.setVelocidad(0); // Si se está frenando, se para (no anda al revés)
+			}
+		} 
+		
+		else {
+			
+			coche.acelera( aceleracion, 0.04 );
+		}
 	}
 
 	/** Crea un coche nuevo y lo añade al mundo y al panel visual
@@ -30,6 +83,75 @@ public class MundoJuego {
 		panel.add( miCoche.getGrafico() );  // Añade al panel visual
 		miCoche.getGrafico().repaint();  // Refresca el dibujado del coche
 	}
+	
+	
+	
+	
+	
+	/** Si han pasado más de 1,2 segundos desde la última,
+	* crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
+	public void creaEstrella(int posX, int posY){
+		
+		Date ahora = new Date();
+		unaEstrella = new Estrella();
+		ListaEstrellas.add(unaEstrella);
+		unaEstrella.setPosicion( posX, posY );
+		unaEstrella.setCreacion(ahora);
+		panel.add( unaEstrella.getGrafico() );  // Añade al panel visual
+		unaEstrella.setPos(posX, posY);
+		unaEstrella.getGrafico().repaint();  // Refresca el dibujado de la estrella
+		
+		
+		
+		
+		
+	}
+	
+	public int quitaYRotaEstrellas( long maxTiempo ){
+		
+		if(ListaEstrellas.size()>0){
+		for(int i=0; i<ListaEstrellas.size(); i++){
+			
+			Date ahora = new Date();
+			long tiempoTranscurrido = ahora.getTime() - ListaEstrellas.get(i).getCreacion().getTime();
+			
+			if (tiempoTranscurrido > maxTiempo){
+			
+				ListaEstrellas.remove(i);
+				System.out.println("posicion " + i + " eliminado");
+				panel.remove(ListaEstrellas.get(i).getGrafico());
+				ListaEstrellas.get(i).getGrafico().repaint();
+				
+				numEstrellasQuitadas ++;
+			}else{
+				
+				ListaEstrellas.get(i).getGrafico().setGiro(10);
+				ListaEstrellas.get(i).getGrafico().repaint();
+			}
+	
+			
+			
+		}
+		}
+		
+		return numEstrellasQuitadas;
+	}
+	
+	/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
+	* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
+	* @return Número de estrellas eliminadas
+	*/
+	
+	public int choquesConEstrellas(){
+		
+		
+		
+		
+		
+		return numEstrellasComidas;
+		
+	}	
+	
 	
 	/** Devuelve el coche del mundo
 	 * @return	Coche en el mundo. Si no lo hay, devuelve null
