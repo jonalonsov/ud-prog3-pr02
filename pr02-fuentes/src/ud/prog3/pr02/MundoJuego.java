@@ -142,15 +142,100 @@ public class MundoJuego {
 	* @return Número de estrellas eliminadas
 	*/
 	
-	public int choquesConEstrellas(){
+//	public int choquesConEstrellas(){
+//		
+//		
+//		
+//		
+//		
+//		return numEstrellasComidas;
+//		
+//	}	
+	
+//	public int quitaYRotaEstrellas( long maxTiempo ){
+//
+//		int numEstrellasQuitadas=0;
+//
+//		for(int i=0 ; i <listaEstrellas.size(); i++){
+//
+//		EstrellaJuego objetoEstrella= new EstrellaJuego();
+//		objetoEstrella= listaEstrellas.get(i);
+//
+//		//Fecha en el que se ha guardado el objeto de esa estrella
+//		Date fecha = objetoEstrella.getAhora();
+//		long milliseconds = fecha.getTime();
+//
+//		//Fecha del momento
+//		Date fechaAhora=new Date();
+//		long milliseconds2 = fechaAhora.getTime();
+//
+//		//Si entre la fecha actual y la fecha de creación han pasado más de maxTiempo(6 segundos)
+//		if(milliseconds2-milliseconds >=maxTiempo){
+//
+//		//Borrar la estrella del array
+//		listaEstrellas.remove(objetoEstrella);
+//
+//		//Borrar la estrella del panel
+//		panel.remove(objetoEstrella.getGrafico());
+//
+//		//Actualizar el panel
+//		panel.repaint();
+//
+//		numEstrellasQuitadas ++;
+//
+//		} else {
+//		//Codificar para que gire la estrella
+//		//objetoEstrella.setGiro(10);
+//
+//		}
+//		}
+//
+//		return numEstrellasQuitadas;
+//
+//		}
+
+		/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
+		* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
+		* @return Número de estrellas eliminadas
+		*/
+		public int choquesConEstrellas(){
+		int numChoques=0;
+
+		for(int i=0 ; i <ListaEstrellas.size(); i++){
+
+		Estrella objetoEstrella= new Estrella();
+		objetoEstrella= ListaEstrellas.get(i);
+
+		//Obtener las posiciones del objeto de Estrella
+		double posXEstrella = objetoEstrella.getPosX();
+		double posYEstrella = objetoEstrella.getPosY();
+
+		//Obtener las posiciones del objeto de Coche
+		double posXCoche = miCoche.getPosX();
+		double posYCoche = miCoche.getPosY();
+
+		//Si la posición del coche y la posición de la estrella es la misma
+		if(posXCoche -posXEstrella >=-35 && posXCoche -posXEstrella <=35 && posYCoche -posYEstrella >=-35 && posYCoche -posYEstrella <=35  ){
+
+		//Borrar la estrella del array
+		ListaEstrellas.remove(objetoEstrella);
+
+		//Borrar la estrella del panel
+		panel.remove(objetoEstrella.getGrafico());
+
+		//Actualizar el panel
+		panel.repaint();
+
+		numChoques ++;
+
+		} 
+		}
+		return numChoques;
+		}
+
 		
 		
-		
-		
-		
-		return numEstrellasComidas;
-		
-	}	
+
 	
 	
 	/** Devuelve el coche del mundo

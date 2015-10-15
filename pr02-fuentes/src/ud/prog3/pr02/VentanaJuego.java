@@ -19,6 +19,9 @@ public class VentanaJuego extends JFrame {
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	boolean[] arrayBoolean;
+	JLabel numEstrellasCogidas;
+	JLabel numEstrellasFalladas;
+	int numFallidos=0;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -28,11 +31,9 @@ public class VentanaJuego extends JFrame {
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 		// Creación contenedores y componentes
 		pPrincipal = new JPanel();
-		JPanel pBotonera = new JPanel();
-		JButton bAcelerar = new JButton( "Acelera" );
-		JButton bFrenar = new JButton( "Frena" );
-		JButton bGiraIzq = new JButton( "Gira Izq." );
-		JButton bGiraDer = new JButton( "Gira Der." );
+		JPanel pMensajera = new JPanel();
+		numEstrellasCogidas = new JLabel();
+		numEstrellasFalladas = new JLabel();
 		arrayBoolean = new boolean [4];
 		
 		
@@ -41,43 +42,14 @@ public class VentanaJuego extends JFrame {
 		pPrincipal.setBackground( Color.white );
 		// Añadido de componentes a contenedores
 		add( pPrincipal, BorderLayout.CENTER );
-		pBotonera.add( bAcelerar );
-		pBotonera.add( bFrenar );
-		pBotonera.add( bGiraIzq );
-		pBotonera.add( bGiraDer );
-		add( pBotonera, BorderLayout.SOUTH );
+		pMensajera.add(numEstrellasCogidas);
+		pMensajera.add(numEstrellasFalladas);
+		add( pMensajera, BorderLayout.SOUTH );
 		// Formato de ventana
 		setSize( 1000, 750 );
 		setResizable( false );
 		// Escuchadores de botones
-		bAcelerar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( +10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bFrenar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( -10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bGiraIzq.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( +10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
-		bGiraDer.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( -10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
+		
 		
 		// Añadido para que también se gestione por teclado con el KeyListener
 		pPrincipal.addKeyListener( new KeyAdapter() {
@@ -189,6 +161,8 @@ public class VentanaJuego extends JFrame {
 	 * @author Andoni Eguíluz
 	 * Facultad de Ingeniería - Universidad de Deusto (2014)
 	 */
+	
+	
 	class MiRunnable implements Runnable {
 		boolean sigo = true;
 		double segundos;
@@ -199,7 +173,18 @@ public class VentanaJuego extends JFrame {
 				// Mover coche
 				
 				
-				miMundo.quitaYRotaEstrellas(6000);
+				numFallidos=miMundo.quitaYRotaEstrellas(6000);
+				numEstrellasFalladas.setText(numEstrellasFalladas.getText() + "FALLOS = " + numFallidos );
+				if(numFallidos==10){
+					sigo=false;
+					//custom title, custom icon
+					JOptionPane.showMessageDialog(
+					    pPrincipal, "GAME OVER",
+					    "Has fallado 10 estrellas",
+					    JOptionPane.INFORMATION_MESSAGE);
+					pPrincipal.setVisible(false);
+										
+				}
 				
 				
 				if (segundos>=1.2){
@@ -280,6 +265,9 @@ public class VentanaJuego extends JFrame {
 		public void acaba() {
 			sigo = false;
 		}
+		
 	};
+	
+	
 	
 }
