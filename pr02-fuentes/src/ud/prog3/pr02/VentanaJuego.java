@@ -19,8 +19,9 @@ public class VentanaJuego extends JFrame {
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	boolean[] arrayBoolean;
-	JLabel numEstrellasCogidas;
-	JLabel numEstrellasFalladas;
+//	JLabel numEstrellasCogidas;
+//	JLabel numEstrellasFalladas;
+	JLabel pMensaje;
 	int numFallidos=0;
 	int numCogidos=0;
 
@@ -32,9 +33,10 @@ public class VentanaJuego extends JFrame {
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 		// Creación contenedores y componentes
 		pPrincipal = new JPanel();
-		JPanel pMensajera = new JPanel();
-		numEstrellasCogidas = new JLabel();
-		numEstrellasFalladas = new JLabel();
+//		JPanel pMensajera = new JPanel();
+		pMensaje = new JLabel();
+//		numEstrellasCogidas = new JLabel();
+//		numEstrellasFalladas = new JLabel();
 		arrayBoolean = new boolean [4];
 		
 		
@@ -43,9 +45,10 @@ public class VentanaJuego extends JFrame {
 		pPrincipal.setBackground( Color.white );
 		// Añadido de componentes a contenedores
 		add( pPrincipal, BorderLayout.CENTER );
-		pMensajera.add(numEstrellasCogidas);
-		pMensajera.add(numEstrellasFalladas);
-		add( pMensajera, BorderLayout.SOUTH );
+//		pMensajera.add(pMensaje);
+//		pMensajera.add(numEstrellasCogidas);
+//		pMensajera.add(numEstrellasFalladas);
+		add( pMensaje, BorderLayout.SOUTH );
 		// Formato de ventana
 		setSize( 1000, 750 );
 		setResizable( false );
@@ -163,7 +166,6 @@ public class VentanaJuego extends JFrame {
 	 * Facultad de Ingeniería - Universidad de Deusto (2014)
 	 */
 	
-	
 	class MiRunnable implements Runnable {
 		boolean sigo = true;
 		double segundos;
@@ -172,33 +174,19 @@ public class VentanaJuego extends JFrame {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				// Mover coche
+				miCoche.mueve( 0.040 );
 				
 				
 				
-				if(numFallidos==10){
-					sigo=false;
-					//custom title, custom icon
-					JOptionPane.showMessageDialog(
-					    pPrincipal, "GAME OVER",
-					    "Has fallado 10 estrellas",
-					    JOptionPane.INFORMATION_MESSAGE);
-					pPrincipal.setVisible(false);
-										
-				}
-				
-				
-				if (segundos>=1.2){
-					Random r = new Random();
-					miMundo.creaEstrella(r.nextInt(1000), r.nextInt(750));
-					//miMundo.quitaYRotaEstrellas(6000);
-					segundos=0.0;
-				} else{
-					
-					segundos = segundos + 0.040;
-				}				
+				// Chequear choques
+				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
+				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
+					miMundo.rebotaHorizontal(miCoche);
+				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
+					miMundo.rebotaVertical(miCoche);
 				
 				double fuerzaRoz= miMundo.calcFuerzaRozamiento(miCoche.getMASA(), miCoche.getCOEF_RZTO_SUELO(), miCoche.getCOEF_RZTO_AIRE(), miCoche.getVelocidad());
-				
+//				
 				if (arrayBoolean[0]==true){
 					
 					
@@ -242,38 +230,162 @@ public class VentanaJuego extends JFrame {
 				}
 
 				
-				numFallidos=miMundo.quitaYRotaEstrellas(6000);
-				numCogidos = miMundo.choquesConEstrellas();
-				numEstrellasFalladas.setText(numEstrellasFalladas.getText() + "FALLOS = " + numFallidos );
-				numEstrellasCogidas.setText(numEstrellasCogidas.getText() + "PUNTUACION = " + numFallidos );
+				if(segundos>=1.2){
 				
-				miCoche.mueve( 0.040 );
-				// Chequear choques			
-				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
-				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
-					miMundo.rebotaHorizontal(miCoche);
-				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
-					miMundo.rebotaVertical(miCoche);
-				// Dormir el hilo 40 milisegundos
-				
-				
-				
-				try {
-					Thread.sleep( 40 );
-				} catch (Exception e) {
+					//Creamos la estrella
+					Random r = new Random();
+					miMundo.creaEstrella(r.nextInt(1000), r.nextInt(750));
+					segundos=0.0;			
+
+					
+				}else{
+					segundos=segundos+0.040;
 				}
 				
+				//Que cada 6 segundos se quite la estrella
+				numFallidos = miMundo.quitaYRotaEstrellas(6000);
 				
+				numCogidos= miMundo.choquesConEstrellas();
+				
+				int puntuacion = numCogidos*5;
+				
+				pMensaje.setText( "      Comidas :                 " + numCogidos + "                           Puntuación :               " + puntuacion +"                           Perdidas :               " + numFallidos );
+				
+				// Dormir el hilo 40 milisegundos
+				try {
+					Thread.sleep( 40 );
+
+				} catch (Exception e) {
+				
+				}
+				//Para que cuando se acumulen 10 estrellas sin comer se salga de la aplicación.
+				if(numFallidos>=10){
+					acaba();
+					//Para que cierre el panel principal
+					pPrincipal.setVisible(false);
+					
+					//Para que  se cierre la ventana
+					System.exit(0); 
+				}
+		
 			}
-			
 		}
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
 		public void acaba() {
 			sigo = false;
 		}
-		
 	};
+//	class MiRunnable implements Runnable {
+//		boolean sigo = true;
+//		double segundos;
+//		@Override
+//		public void run() {
+//			// Bucle principal forever hasta que se pare el juego...
+//			while (sigo) {
+//				// Mover coche
+//				
+//				
+//				
+//				if(numFallidos==10){
+//					sigo=false;
+//					//custom title, custom icon
+//					JOptionPane.showMessageDialog(
+//					    pPrincipal, "GAME OVER",
+//					    "Has fallado 10 estrellas",
+//					    JOptionPane.INFORMATION_MESSAGE);
+//					pPrincipal.setVisible(false);
+//										
+//				}
+//				
+//				
+//				if (segundos>=1.2){
+//					Random r = new Random();
+//					miMundo.creaEstrella(r.nextInt(1000), r.nextInt(750));
+//					//miMundo.quitaYRotaEstrellas(6000);
+//					segundos=0.0;
+//				} else{
+//					
+//					segundos = segundos + 0.040;
+//				}				
+//				
+//				double fuerzaRoz= miMundo.calcFuerzaRozamiento(miCoche.getMASA(), miCoche.getCOEF_RZTO_SUELO(), miCoche.getCOEF_RZTO_AIRE(), miCoche.getVelocidad());
+//				
+//				if (arrayBoolean[0]==true){
+//					
+//					
+//					miMundo.calcAceleracionConFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche.getMASA());
+//					miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche);
+//					
+//					
+//					
+//					//miCoche.acelera( +5, 1 );
+//				}
+//				
+//				if (arrayBoolean[0]==false){
+//					
+//					
+//					//miMundo.calcAceleracionConFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche.getMASA());
+//					miMundo.aplicarFuerza(fuerzaRoz, miCoche);
+//					
+//				}
+//
+//				
+//				
+//				if (arrayBoolean[1]==true){
+//					
+//					miMundo.calcAceleracionConFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche.getMASA());
+//					miMundo.aplicarFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche);
+//					
+//					//miCoche.acelera( -5, 1 );
+//				}
+//				
+//				if (arrayBoolean[1]==false){
+//					
+//					//miMundo.calcAceleracionConFuerza(-miCoche.fuerzaAceleracionAtras(), miCoche.getMASA());
+//					miMundo.aplicarFuerza(fuerzaRoz, miCoche);
+//					
+//				}
+//				if (arrayBoolean[2]==true){
+//					miCoche.gira( +10 );
+//				}
+//				if (arrayBoolean[3]==true){
+//					miCoche.gira( -10 );
+//				}
+//
+//				
+//				numFallidos=miMundo.quitaYRotaEstrellas(6000);
+//				numCogidos = miMundo.choquesConEstrellas();
+//				numEstrellasFalladas.setText(numEstrellasFalladas.getText() + "FALLOS = " + numFallidos );
+//				numEstrellasCogidas.setText(numEstrellasCogidas.getText() + "PUNTUACION = " + numFallidos );
+//				
+//				miCoche.mueve( 0.040 );
+//				// Chequear choques			
+//				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
+//				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
+//					miMundo.rebotaHorizontal(miCoche);
+//				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
+//					miMundo.rebotaVertical(miCoche);
+//				// Dormir el hilo 40 milisegundos
+//				
+//				
+//				
+//				try {
+//					Thread.sleep( 40 );
+//				} catch (Exception e) {
+//				}
+//				
+//				
+//			}
+//			
+//		}
+//		/** Ordena al hilo detenerse en cuanto sea posible
+//		 */
+//		public void acaba() {
+//			sigo = false;
+//		}
+//		
+//	};
 	
 	
 	
