@@ -18,6 +18,7 @@ public class MundoJuego {
 	ArrayList<Estrella> ListaEstrellas = new ArrayList<Estrella>();
 	int numEstrellasQuitadas=0;
 	int numEstrellasComidas=0;
+	int numChoques=0;
 	
 	
 	
@@ -143,7 +144,7 @@ public class MundoJuego {
 		* @return Número de estrellas eliminadas
 		*/
 		public int choquesConEstrellas(){
-		int numChoques=0;
+		
 
 		for(int i=0 ; i <ListaEstrellas.size(); i++){
 
@@ -160,17 +161,17 @@ public class MundoJuego {
 
 		//Si la posición del coche y la posición de la estrella es la misma
 		if(posXCoche -posXEstrella >=-35 && posXCoche -posXEstrella <=35 && posYCoche -posYEstrella >=-35 && posYCoche -posYEstrella <=35  ){
+			numChoques ++;
+			//Borrar la estrella del array
+			ListaEstrellas.remove(objetoEstrella);
+	
+			//Borrar la estrella del panel
+			panel.remove(objetoEstrella.getGrafico());
+	
+			//Actualizar el panel
+			panel.repaint();
 
-		//Borrar la estrella del array
-		ListaEstrellas.remove(objetoEstrella);
-
-		//Borrar la estrella del panel
-		panel.remove(objetoEstrella.getGrafico());
-
-		//Actualizar el panel
-		panel.repaint();
-
-		numChoques ++;
+		
 
 		} 
 		}
