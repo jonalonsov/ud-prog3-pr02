@@ -22,6 +22,7 @@ public class VentanaJuego extends JFrame {
 	JLabel numEstrellasCogidas;
 	JLabel numEstrellasFalladas;
 	int numFallidos=0;
+	int numCogidos=0;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -50,7 +51,7 @@ public class VentanaJuego extends JFrame {
 		setResizable( false );
 		// Escuchadores de botones
 		
-		
+				
 		// Añadido para que también se gestione por teclado con el KeyListener
 		pPrincipal.addKeyListener( new KeyAdapter() {
 			@Override
@@ -173,8 +174,7 @@ public class VentanaJuego extends JFrame {
 				// Mover coche
 				
 				
-				numFallidos=miMundo.quitaYRotaEstrellas(6000);
-				numEstrellasFalladas.setText(numEstrellasFalladas.getText() + "FALLOS = " + numFallidos );
+				
 				if(numFallidos==10){
 					sigo=false;
 					//custom title, custom icon
@@ -242,9 +242,10 @@ public class VentanaJuego extends JFrame {
 				}
 
 				
-				
-				
-				
+				numFallidos=miMundo.quitaYRotaEstrellas(6000);
+				numCogidos = miMundo.choquesConEstrellas();
+				numEstrellasFalladas.setText(numEstrellasFalladas.getText() + "FALLOS = " + numFallidos );
+				numEstrellasCogidas.setText(numEstrellasCogidas.getText() + "PUNTUACION = " + numFallidos );
 				
 				miCoche.mueve( 0.040 );
 				// Chequear choques			
@@ -254,11 +255,17 @@ public class VentanaJuego extends JFrame {
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
 				// Dormir el hilo 40 milisegundos
+				
+				
+				
 				try {
 					Thread.sleep( 40 );
 				} catch (Exception e) {
 				}
+				
+				
 			}
+			
 		}
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */

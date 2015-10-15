@@ -137,63 +137,7 @@ public class MundoJuego {
 		return numEstrellasQuitadas;
 	}
 	
-	/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
-	* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
-	* @return Número de estrellas eliminadas
-	*/
 	
-//	public int choquesConEstrellas(){
-//		
-//		
-//		
-//		
-//		
-//		return numEstrellasComidas;
-//		
-//	}	
-	
-//	public int quitaYRotaEstrellas( long maxTiempo ){
-//
-//		int numEstrellasQuitadas=0;
-//
-//		for(int i=0 ; i <listaEstrellas.size(); i++){
-//
-//		EstrellaJuego objetoEstrella= new EstrellaJuego();
-//		objetoEstrella= listaEstrellas.get(i);
-//
-//		//Fecha en el que se ha guardado el objeto de esa estrella
-//		Date fecha = objetoEstrella.getAhora();
-//		long milliseconds = fecha.getTime();
-//
-//		//Fecha del momento
-//		Date fechaAhora=new Date();
-//		long milliseconds2 = fechaAhora.getTime();
-//
-//		//Si entre la fecha actual y la fecha de creación han pasado más de maxTiempo(6 segundos)
-//		if(milliseconds2-milliseconds >=maxTiempo){
-//
-//		//Borrar la estrella del array
-//		listaEstrellas.remove(objetoEstrella);
-//
-//		//Borrar la estrella del panel
-//		panel.remove(objetoEstrella.getGrafico());
-//
-//		//Actualizar el panel
-//		panel.repaint();
-//
-//		numEstrellasQuitadas ++;
-//
-//		} else {
-//		//Codificar para que gire la estrella
-//		//objetoEstrella.setGiro(10);
-//
-//		}
-//		}
-//
-//		return numEstrellasQuitadas;
-//
-//		}
-
 		/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
 		* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
 		* @return Número de estrellas eliminadas
